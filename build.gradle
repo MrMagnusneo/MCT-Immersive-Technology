@@ -69,6 +69,7 @@ ext {
     version_ie_full = "${version_minecraft}-${version_ie}"
     version_ic = versionProps.getProperty('version_ic', '[0,)')
     version_ie_curse = versionProps['version_ie_curse']
+    version_ic_curse = versionProps['version_ic_curse']
     version_wayfix_curse = versionProps['version_wayfix_curse']
     version_cloth_config_curse = versionProps['version_cloth_config_curse']
     version_engineered_schematics_curse = versionProps['version_engineered_schematics_curse']
@@ -145,20 +146,6 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
     into "$projectDir/out/production/resources"
     include "META-INF/neoforge.mods.toml", "META-INF/mods.toml"
     dependsOn processResources
-}
-
-def icJar = null
-def icDir = file('../ImmersiveConvergence-21/build/libs')
-def matchingJars = fileTree(icDir) {
-    include "ImmersiveConvergence-${version_minecraft}-*-dev.jar"
-    exclude "**/*-sources.jar"
-}.files
-
-if (!matchingJars.isEmpty()) {
-    icJar = matchingJars.sort { a, b -> b.lastModified() <=> a.lastModified() }.last()
-    logger.lifecycle("✅ Found IC deobf JAR: ${icJar.name}")
-} else {
-    logger.warn('⚠️  No IC deobf JAR found in ../ImmersiveConvergence-21/build/libs')
 }
 
 neoForge {
@@ -251,15 +238,10 @@ dependencies {
 
     implementation "curse.maven:${version_ie_curse}"
     implementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie_full}:datagen"
+    implementation "curse.maven:${version_ic_curse}"
 
     implementation "curse.maven:${version_jade_curse}"
     implementation "curse.maven:${version_top_curse}"
-
-    if (icJar != null) {
-        implementation files(icJar)
-    } else {
-        logger.warn('⚠️  Falling back to CurseMaven for ImmersiveConvergence')
-    }
 
     jarJar(implementation("malte0811:DualCodecs")) {
         version {
