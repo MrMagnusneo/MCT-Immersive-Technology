@@ -28,7 +28,7 @@ The baseline manifest records both logical registrations and SHA-256 hashes for 
 | Network messages | 6 |
 | Integration entry points | 23 |
 | Production Java sources | 350 |
-| Namespaced resources | 827 |
+| Production resources (all namespaces and root metadata) | 841 |
 
 ## Automated acceptance gates
 
@@ -38,7 +38,7 @@ The GitHub Actions workflow performs these checks in order:
 2. Compare the source tree with the content/hash baseline and reject duplicate registrations or resource paths.
 3. Run NeoForge datagen and repeat the manifest/hash check, including a clean Git diff for production and generated resources.
 4. Run a clean Gradle build with an immutable committed version.
-5. Select exactly one gameplay JAR and verify its filename, NeoForge metadata, required dependencies, mixin config, all 350 compiled top-level classes, and the semantic or byte-exact content of all 827 resources.
+5. Select exactly one gameplay JAR and verify its filename, expanded NeoForge metadata, required dependencies, mixin config, all 350 compiled top-level classes, and the semantic or byte-exact content of all 841 production resources.
 6. Start the dedicated server, observe it after the ready state, reject fatal markers, send `stop`, and require exit code 0.
 7. Confirm `version.properties` was not changed and upload the exact verified JAR only when all preceding gates succeed.
 

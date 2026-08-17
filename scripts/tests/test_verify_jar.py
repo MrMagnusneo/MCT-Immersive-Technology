@@ -23,12 +23,14 @@ class VerifyJarTest(unittest.TestCase):
             baseline.write_text(json.dumps(manifest), encoding="utf-8")
             jar = root / "MCT-ImmersiveTechnology-1.21.1-3.0.0-b1-alpha.jar"
             metadata = '''
+                modLoader = "javafml"
                 modId = "immersivetechnology"
                 modId = "neoforge"
                 modId = "minecraft"
                 modId = "immersiveengineering"
                 modId = "immersiveconvergence"
                 versionRange = "[1.21.1]"
+                config = "mixins.immersivetechnology.json"
             '''
             with zipfile.ZipFile(jar, "w") as archive:
                 archive.writestr("META-INF/neoforge.mods.toml", metadata)

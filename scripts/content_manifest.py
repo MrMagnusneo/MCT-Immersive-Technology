@@ -107,15 +107,14 @@ def collect_manifest(root: Path) -> dict:
         values["blocks"].add(f"{fluid}_fluid_block")
 
     for base in (root / "src/main/resources", root / "src/generated/resources"):
-        for namespace_root in (base / "assets/immersivetechnology", base / "data/immersivetechnology"):
-            if not namespace_root.exists():
-                continue
-            for path in sorted(namespace_root.rglob("*")):
-                if path.is_file():
-                    jar_path = path.relative_to(base).as_posix()
-                    resource_occurrences.append(jar_path)
-                    values["resource_paths"].add(jar_path)
-                    resource_hashes[jar_path] = _sha256(path)
+        if not base.exists():
+            continue
+        for path in sorted(base.rglob("*")):
+            if path.is_file() and path.name != ".cache":
+                jar_path = path.relative_to(base).as_posix()
+                resource_occurrences.append(jar_path)
+                values["resource_paths"].add(jar_path)
+                resource_hashes[jar_path] = _sha256(path)
 
     duplicate_resources = sorted(path for path, count in Counter(resource_occurrences).items() if count > 1)
     if duplicate_resources:

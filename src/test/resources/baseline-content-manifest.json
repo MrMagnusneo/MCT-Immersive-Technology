@@ -348,6 +348,8 @@
     "mctmods/immersivetechnology/core/integration/top/OneProbeIMCHelper"
   ],
   "resource_paths": [
+    "META-INF/accesstransformer.cfg",
+    "META-INF/neoforge.mods.toml",
     "assets/immersivetechnology/blockstates/advanced_coke_oven.json",
     "assets/immersivetechnology/blockstates/advanced_coke_oven_baseheater.json",
     "assets/immersivetechnology/blockstates/alternator.json",
@@ -1017,6 +1019,12 @@
     "assets/immersivetechnology/textures/multiblock/stone/cooling_tower.png",
     "assets/immersivetechnology/textures/multiblock/stone/cooling_tower_base.png",
     "assets/immersivetechnology/textures/radiator/metal_multiblock_radiator.png",
+    "assets/minecraft/atlases/blocks.json",
+    "data/c/tags/fluid/distilled_water.json",
+    "data/c/tags/fluid/steam.json",
+    "data/forge/tags/item/dusts/salt.json",
+    "data/forge/tags/item/salts.json",
+    "data/immersiveengineering/tags/item/tools/hammers.json",
     "data/immersivetechnology/advancement/recipes/boiler_liquid/biodiesel.json",
     "data/immersivetechnology/advancement/recipes/boiler_liquid/diesel.json",
     "data/immersivetechnology/advancement/recipes/boiler_liquid/gasoline.json",
@@ -1174,7 +1182,13 @@
     "data/immersivetechnology/tags/item/formation_tools.json",
     "data/immersivetechnology/tags/item/igniters.json",
     "data/immersivetechnology/tags/item/igniters_consume.json",
-    "data/immersivetechnology/tags/item/screwdrivers.json"
+    "data/immersivetechnology/tags/item/screwdrivers.json",
+    "data/minecraft/tags/block/mineable/axe.json",
+    "data/minecraft/tags/block/mineable/pickaxe.json",
+    "data/minecraft/tags/block/needs_iron_tool.json",
+    "logo.png",
+    "mixins.immersivetechnology.json",
+    "pack.mcmeta"
   ],
   "java_sources": {
     "src/main/java/mctmods/immersivetechnology/ImmersiveTechnology.java": "da24e1f4ac011e8f2108e17792df4ba8c5cc98bbf40ea47bf7f2c0ab3012aa5f",
@@ -1529,6 +1543,8 @@
     "src/main/java/mctmods/immersivetechnology/mixin/common/MultiblockBEHelperCommonMixin.java": "f0dcdeffd5c072b7b407def0f14dab9b1297e621ba1d0681bcba80c243270204"
   },
   "resource_hashes": {
+    "META-INF/accesstransformer.cfg": "4d959e4d8179b7a2b3db583648979ab373aad3387ac22423da2fbc69420e1495",
+    "META-INF/neoforge.mods.toml": "fee3eff8ff590cec121831e980517a744f7af20d793716f9a99fd8ef2dbff87c",
     "assets/immersivetechnology/blockstates/advanced_coke_oven.json": "50d5fad21cb682ea24ebb2cfdbbc411efb8cad2b0b8313ce70cedbc5205b3a77",
     "assets/immersivetechnology/blockstates/advanced_coke_oven_baseheater.json": "56afd1524d3f0bf128077ad2d242bea95049b2cfe734c83101715cd986f46ac7",
     "assets/immersivetechnology/blockstates/alternator.json": "48f674a59360ef82152c53b0c0f65813709d8749d52fba20658a5cb38d24ae0b",
@@ -2198,6 +2214,12 @@
     "assets/immersivetechnology/textures/multiblock/stone/cooling_tower.png": "d37514b43058926fdd3cf6b8a221062ef8152f465b42f3f9dc06fc645f5d8b18",
     "assets/immersivetechnology/textures/multiblock/stone/cooling_tower_base.png": "821d616130d861cad7b32de9c63b0e245dd799c79aded267b138165a2fe40456",
     "assets/immersivetechnology/textures/radiator/metal_multiblock_radiator.png": "dd6a1ad459007e6a34adbbde6d5d8eda8136dcd6b52ccc08af691987e3efa8d8",
+    "assets/minecraft/atlases/blocks.json": "13f1f333fce9675844ca3093329c78026ed66a7c2cd454feb79d78647308d9cf",
+    "data/c/tags/fluid/distilled_water.json": "1a67547bee6f9d76950bb2de706a199af080c67f6a21dcc86582a59411b8c762",
+    "data/c/tags/fluid/steam.json": "585b868e3f8e3d7323a22525c52929b0ac8c69d61988e6440a0c9f5441c93265",
+    "data/forge/tags/item/dusts/salt.json": "913ab1a8919ab8002aab42a389e8010fffffc7acbd4e50a40d3522a3d8e6a185",
+    "data/forge/tags/item/salts.json": "913ab1a8919ab8002aab42a389e8010fffffc7acbd4e50a40d3522a3d8e6a185",
+    "data/immersiveengineering/tags/item/tools/hammers.json": "648acdbf11a8c7787af660f1877c48c29165ed76b8199981c40f5c58f4347f7e",
     "data/immersivetechnology/advancement/recipes/boiler_liquid/biodiesel.json": "108a6fa14d3128afa1987f28de9e8555162d4c94cfab7d97cf17604eb0ae34fa",
     "data/immersivetechnology/advancement/recipes/boiler_liquid/diesel.json": "1054f6e799d8e941b89d32501289b61e9416ce03884b47cf7166ba6e576c2576",
     "data/immersivetechnology/advancement/recipes/boiler_liquid/gasoline.json": "8ec8b1e392bc354389369213aa38b77b62144fb0ca55bbb0a3dccfd860e42dc3",
@@ -2355,6 +2377,12 @@
     "data/immersivetechnology/tags/item/formation_tools.json": "82964a01a1ca1af8310aa3285c7b3cb5fb80b4c7a9d2ad64f4a4793a639f0256",
     "data/immersivetechnology/tags/item/igniters.json": "14955270e99084e2e20349a0232df4392a73c8b0dd513eb3d47551d533cc09db",
     "data/immersivetechnology/tags/item/igniters_consume.json": "8c964bbff607dd16d89b0f78ace599f3cacb3e695f0e195202725c34541fdb97",
-    "data/immersivetechnology/tags/item/screwdrivers.json": "4cc440e8d3d35e28d268ba2c2f0968f91be8d3075fa08015133569d0fe172895"
+    "data/immersivetechnology/tags/item/screwdrivers.json": "4cc440e8d3d35e28d268ba2c2f0968f91be8d3075fa08015133569d0fe172895",
+    "data/minecraft/tags/block/mineable/axe.json": "56315bebe94640a5753045a96cdfce00d5d0579c7bcd71e49083ecb86ff8aad1",
+    "data/minecraft/tags/block/mineable/pickaxe.json": "2357695f46ef509996c6558b320e3c9d9ec85b082138d4f71fe54170ca5c84bd",
+    "data/minecraft/tags/block/needs_iron_tool.json": "5a8927cd7d0987119bea5369910c59f1c175cc52ac7082859f41afc544f3d0aa",
+    "logo.png": "f2fd3384b511e479f83714c65342a6af9be0da0a2a1bf0f5ad2eb0d008660c7a",
+    "mixins.immersivetechnology.json": "47b91d091ad6769903595506398749d32ab761a51c4d1ed3ba96a8e75f64e16d",
+    "pack.mcmeta": "4e02fa7d5f77fc20d3c43114dd66060aec1ca5ff295ea9ca8607482a4b0d6b1b"
   }
 }

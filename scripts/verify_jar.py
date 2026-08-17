@@ -57,6 +57,10 @@ def verify_jar(root: Path, baseline_path: Path, jar_path: Path) -> dict:
 
         content_mismatches = []
         for resource_path in baseline["resource_paths"]:
+            if resource_path == "META-INF/neoforge.mods.toml":
+                # This template is intentionally expanded by processResources;
+                # its required static and substituted fields are checked below.
+                continue
             source = _source_resource(root, resource_path)
             packaged = archive.read(resource_path)
             if source.suffix in {".json", ".mcmeta"}:
@@ -73,12 +77,14 @@ def verify_jar(root: Path, baseline_path: Path, jar_path: Path) -> dict:
 
         metadata = archive.read("META-INF/neoforge.mods.toml").decode("utf-8")
         required_metadata = (
+            r'modLoader\s*=\s*"javafml"',
             r'modId\s*=\s*"immersivetechnology"',
             r'modId\s*=\s*"neoforge"',
             r'modId\s*=\s*"minecraft"',
             r'modId\s*=\s*"immersiveengineering"',
             r'modId\s*=\s*"immersiveconvergence"',
             r'versionRange\s*=\s*"\[1\.21\.1\]"',
+            r'config\s*=\s*"mixins\.immersivetechnology\.json"',
         )
         missing_metadata = [pattern for pattern in required_metadata if not re.search(pattern, metadata)]
         if missing_metadata:
