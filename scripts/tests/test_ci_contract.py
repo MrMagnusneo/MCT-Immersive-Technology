@@ -17,6 +17,17 @@ class CiContractTest(unittest.TestCase):
         self.assertIn("./gradlew runServer", script)
         self.assertIn("Done (", script)
 
+    def test_prepare_tasks_are_configuration_cache_safe(self):
+        build_script = (ROOT / "build.gradle").read_text()
+        self.assertNotIn(
+            "doFirst {\n        layout.buildDirectory.dir('classes/java/gametest')",
+            build_script,
+        )
+        self.assertNotIn(
+            "doFirst {\n        layout.buildDirectory.dir('classes/java/datagen')",
+            build_script,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

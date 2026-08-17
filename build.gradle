@@ -196,18 +196,10 @@ neoForge {
 
 tasks.register('prepareGametestOutputs') {
     dependsOn gametestClasses, processResources
-    doFirst {
-        layout.buildDirectory.dir('classes/java/gametest').get().asFile.mkdirs()
-        layout.buildDirectory.dir('resources/gametest').get().asFile.mkdirs()
-    }
 }
 
 tasks.register('prepareDatagenOutputs') {
     dependsOn datagenClasses, processResources
-    doFirst {
-        layout.buildDirectory.dir('classes/java/datagen').get().asFile.mkdirs()
-        layout.buildDirectory.dir('resources/datagen').get().asFile.mkdirs()
-    }
 }
 
 afterEvaluate {
