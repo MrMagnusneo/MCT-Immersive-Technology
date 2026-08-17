@@ -31,10 +31,17 @@ jobs:
       - name: Verify content manifest
         run: |
           python3 -m unittest scripts.tests.test_content_manifest -v
+          python3 -m unittest scripts.tests.test_ci_contract -v
           python3 scripts/content_manifest.py --check src/test/resources/baseline-content-manifest.json
+
+      - name: Run data generators
+        run: ./gradlew runData --stacktrace
 
       - name: Build
         run: ./gradlew clean build --stacktrace
+
+      - name: Smoke-test dedicated server
+        run: scripts/ci/server_smoke.sh
 
       - name: Upload gameplay JAR
         if: always()
