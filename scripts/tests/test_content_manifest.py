@@ -69,11 +69,15 @@ class ContentManifestTest(unittest.TestCase):
             resource = root / "src/generated/resources/data/immersivetechnology/recipes/test.json"
             resource.parent.mkdir(parents=True)
             resource.write_text('{"type":"example"}\n', encoding="utf-8")
+            cache = root / "src/generated/resources/.cache/generated-hash"
+            cache.parent.mkdir(parents=True)
+            cache.write_text("ephemeral", encoding="utf-8")
 
             manifest = collect_manifest(root)
 
             self.assertIn("src/main/java/example/Entry.java", manifest["java_sources"])
             self.assertIn("data/immersivetechnology/recipes/test.json", manifest["resource_hashes"])
+            self.assertNotIn(".cache/generated-hash", manifest["resource_hashes"])
             self.assertEqual(64, len(manifest["java_sources"]["src/main/java/example/Entry.java"]))
 
     def test_real_manifest_covers_extended_content_surfaces(self):
