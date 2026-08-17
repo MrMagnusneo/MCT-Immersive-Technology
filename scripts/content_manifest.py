@@ -110,8 +110,9 @@ def collect_manifest(root: Path) -> dict:
         if not base.exists():
             continue
         for path in sorted(base.rglob("*")):
-            if path.is_file() and path.name != ".cache":
-                jar_path = path.relative_to(base).as_posix()
+            relative = path.relative_to(base)
+            if path.is_file() and ".cache" not in relative.parts:
+                jar_path = relative.as_posix()
                 resource_occurrences.append(jar_path)
                 values["resource_paths"].add(jar_path)
                 resource_hashes[jar_path] = _sha256(path)
