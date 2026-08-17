@@ -167,6 +167,7 @@ neoForge {
     runs {
         client {
             client()
+            getAdditionalRuntimeClasspathConfiguration().extendsFrom(configurations.clientRuntimeOnly)
             programArguments.addAll '--username', 'tgstyle', '--width', '1920', '--height', '1080'
             jvmArgument("-Djava.library.path=/usr/lib64")
             environment 'LD_LIBRARY_PATH', '/usr/lib64'
@@ -217,6 +218,7 @@ repositories {
 }
 
 configurations {
+    clientRuntimeOnly
     runtimeClasspath.extendsFrom localRuntime
 }
 
@@ -224,7 +226,7 @@ dependencies {
     implementation "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
     runtimeOnly  "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
 
-    runtimeOnly "curse.maven:${version_wayfix_curse}"
+    clientRuntimeOnly "curse.maven:${version_wayfix_curse}"
     runtimeOnly "curse.maven:${version_cloth_config_curse}"
     runtimeOnly "curse.maven:${version_engineered_schematics_curse}"
 

@@ -28,6 +28,21 @@ class CiContractTest(unittest.TestCase):
             build_script,
         )
 
+    def test_client_only_wayfix_is_not_on_the_server_classpath(self):
+        build_script = (ROOT / "build.gradle").read_text()
+        self.assertIn(
+            'clientRuntimeOnly "curse.maven:${version_wayfix_curse}"',
+            build_script,
+        )
+        self.assertNotIn(
+            'runtimeOnly "curse.maven:${version_wayfix_curse}"',
+            build_script,
+        )
+        self.assertIn(
+            "getAdditionalRuntimeClasspathConfiguration().extendsFrom(configurations.clientRuntimeOnly)",
+            build_script,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
