@@ -204,6 +204,7 @@ tasks.register('prepareDatagenOutputs') {
 
 afterEvaluate {
     tasks.named('runData').configure { dependsOn('prepareDatagenOutputs', 'prepareGametestOutputs') }
+    tasks.named('runServer').configure { standardInput = System.in }
 }
 
 repositories {

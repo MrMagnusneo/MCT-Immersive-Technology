@@ -56,6 +56,11 @@ class CiContractTest(unittest.TestCase):
         self.assertIn('def newVersion = "${baseVersion}-b${currentBuild}-${stage}"', build_script)
         self.assertNotRegex(build_script, r"(?m)^\s*(?:processResources|jar|datagenJar|sourcesJar|build)\.dependsOn bumpVersion$")
 
+    def test_server_run_accepts_a_graceful_stop_command(self):
+        build_script = (ROOT / "build.gradle").read_text()
+        self.assertIn("tasks.named('runServer').configure", build_script)
+        self.assertIn("standardInput = System.in", build_script)
+
 
 if __name__ == "__main__":
     unittest.main()
