@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.content_manifest import collect_manifest, compare_manifests
+from scripts.content_manifest import ManifestError, collect_manifest, compare_manifests
 
 
 class ContentManifestTest(unittest.TestCase):
@@ -46,6 +46,50 @@ class ContentManifestTest(unittest.TestCase):
 
         self.assertEqual(["a"], differences["blocks"]["removed"])
         self.assertEqual(["assets/x.json"], differences["resource_paths"]["removed"])
+
+    def test_rejects_duplicate_explicit_registrations(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            registration = root / "src/main/java/example/ModItems.java"
+            registration.parent.mkdir(parents=True)
+            registration.write_text(
+                'register("duplicate", Maker::new); register("duplicate", Maker::new);',
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ManifestError, "items:duplicate"):
+                collect_manifest(root)
+
+    def test_hashes_all_production_sources_and_resources(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src/main/java/example/Entry.java"
+            source.parent.mkdir(parents=True)
+            source.write_text("package example; class Entry {}\n", encoding="utf-8")
+            resource = root / "src/generated/resources/data/immersivetechnology/recipes/test.json"
+            resource.parent.mkdir(parents=True)
+            resource.write_text('{"type":"example"}\n', encoding="utf-8")
+
+            manifest = collect_manifest(root)
+
+            self.assertIn("src/main/java/example/Entry.java", manifest["java_sources"])
+            self.assertIn("data/immersivetechnology/recipes/test.json", manifest["resource_hashes"])
+            self.assertEqual(64, len(manifest["java_sources"]["src/main/java/example/Entry.java"]))
+
+    def test_real_manifest_covers_extended_content_surfaces(self):
+        root = Path(__file__).resolve().parents[2]
+        manifest = collect_manifest(root)
+
+        for category in (
+            "config_keys",
+            "creative_tabs",
+            "loot_entries",
+            "network_messages",
+            "integrations",
+            "java_sources",
+            "resource_hashes",
+        ):
+            self.assertTrue(manifest[category], category)
 
 
 if __name__ == "__main__":

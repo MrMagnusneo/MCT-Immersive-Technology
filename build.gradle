@@ -34,17 +34,16 @@ def gradleProps = new Properties()
 file('gradle.properties').withInputStream { gradleProps.load(it) }
 
 def currentBuild = versionProps.getProperty('build_number')?.toInteger() ?: 0
-def nextBuild = currentBuild + 1
 def stage = versionProps.getProperty('stage') ?: ''
 def baseVersion = versionProps.getProperty('version')
-def newVersion = "${baseVersion}-b${nextBuild}-${stage}"
+def newVersion = "${baseVersion}-b${currentBuild}-${stage}"
 
 version = newVersion
-ext.version_buildnumber = nextBuild
+ext.version_buildnumber = currentBuild
 ext.stage = stage
 ext.version_dualcodecs = versionProps.getProperty('version_dualcodecs') ?: '2.0.1'
 
-println "-> build.gradle applying version: $version (build ${nextBuild})"
+println "-> build.gradle applying version: $version (build ${currentBuild})"
 
 tasks.withType(Jar).configureEach {
     archiveVersion.set(newVersion)
@@ -256,7 +255,7 @@ tasks.register('bumpVersion') {
     doLast {
         def props = new Properties()
         versionPropsFile.asFile.withInputStream { props.load(it) }
-        props['build_number'] = nextBuild.toString()
+        props['build_number'] = (currentBuild + 1).toString()
         versionPropsFile.asFile.withOutputStream { props.store(it, null) }
     }
 }
@@ -323,11 +322,6 @@ tasks.register('optimizeOgg') {
     }
 }
 
-processResources.dependsOn bumpVersion
-jar.dependsOn bumpVersion
-datagenJar.dependsOn bumpVersion
-sourcesJar.dependsOn bumpVersion
-
 tasks.register('genIntellijRunsDummy') {}
 
 jar {
@@ -343,5 +337,3 @@ publishing {
     publications { register('mavenJava', MavenPublication) { from(components.java as SoftwareComponent) }}
     repositories { maven { url = "file://${project.projectDir}/repo" } }
 }
-
-build.dependsOn bumpVersion

@@ -30,26 +30,45 @@ jobs:
 
       - name: Verify content manifest
         run: |
-          python3 -m unittest scripts.tests.test_content_manifest -v
-          python3 -m unittest scripts.tests.test_ci_contract -v
+          python3 -m unittest discover -s scripts/tests -v
           python3 scripts/content_manifest.py --check src/test/resources/baseline-content-manifest.json
+          cp version.properties "$RUNNER_TEMP/version.properties"
 
       - name: Run data generators
         run: ./gradlew runData --stacktrace
 
+      - name: Verify generated content
+        run: |
+          python3 scripts/content_manifest.py --check src/test/resources/baseline-content-manifest.json
+          git diff --exit-code -- src/main src/generated
+
       - name: Build
         run: ./gradlew clean build --stacktrace
+
+      - name: Verify gameplay JAR
+        id: gameplay-jar
+        shell: bash
+        run: |
+          mapfile -t jars < <(find build/libs -maxdepth 1 -type f -name 'MCT-ImmersiveTechnology-1.21.1-*.jar' ! -name '*-sources.jar' ! -name '*-datagen.jar')
+          if [[ "${#jars[@]}" -ne 1 ]]; then
+            echo "Expected exactly one gameplay JAR, found ${#jars[@]}"
+            printf '%s\n' "${jars[@]}"
+            exit 1
+          fi
+          python3 scripts/verify_jar.py "${jars[0]}"
+          echo "path=${jars[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Smoke-test dedicated server
         run: scripts/ci/server_smoke.sh
 
+      - name: Verify immutable build version
+        run: |
+          cmp version.properties "$RUNNER_TEMP/version.properties"
+          git diff --exit-code -- version.properties
+
       - name: Upload gameplay JAR
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mct-immersive-technology-neoforge-1.21.1
-          path: |
-            build/libs/*.jar
-            !build/libs/*-sources.jar
-            !build/libs/*-datagen.jar
-          if-no-files-found: warn
+          path: ${{ steps.gameplay-jar.outputs.path }}
+          if-no-files-found: error
