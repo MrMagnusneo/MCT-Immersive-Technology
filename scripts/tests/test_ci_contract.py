@@ -39,7 +39,7 @@ class CiContractTest(unittest.TestCase):
             build_script,
         )
         self.assertIn(
-            "getAdditionalRuntimeClasspathConfiguration().extendsFrom(configurations.clientRuntimeOnly)",
+            "getAdditionalRuntimeClasspathConfiguration().extendsFrom(configurations.maybeCreate('clientRuntimeOnly'))",
             build_script,
         )
 

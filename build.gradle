@@ -167,7 +167,7 @@ neoForge {
     runs {
         client {
             client()
-            getAdditionalRuntimeClasspathConfiguration().extendsFrom(configurations.clientRuntimeOnly)
+            getAdditionalRuntimeClasspathConfiguration().extendsFrom(configurations.maybeCreate('clientRuntimeOnly'))
             programArguments.addAll '--username', 'tgstyle', '--width', '1920', '--height', '1080'
             jvmArgument("-Djava.library.path=/usr/lib64")
             environment 'LD_LIBRARY_PATH', '/usr/lib64'
