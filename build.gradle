@@ -34,17 +34,16 @@ def gradleProps = new Properties()
 file('gradle.properties').withInputStream { gradleProps.load(it) }
 
 def currentBuild = versionProps.getProperty('build_number')?.toInteger() ?: 0
-def nextBuild = currentBuild + 1
 def stage = versionProps.getProperty('stage') ?: ''
 def baseVersion = versionProps.getProperty('version')
-def newVersion = "${baseVersion}-b${nextBuild}-${stage}"
+def newVersion = "${baseVersion}-b${currentBuild}-${stage}"
 
 version = newVersion
-ext.version_buildnumber = nextBuild
+ext.version_buildnumber = currentBuild
 ext.stage = stage
 ext.version_dualcodecs = versionProps.getProperty('version_dualcodecs') ?: '2.0.1'
 
-println "-> build.gradle applying version: $version (build ${nextBuild})"
+println "-> build.gradle applying version: $version (build ${currentBuild})"
 
 tasks.withType(Jar).configureEach {
     archiveVersion.set(newVersion)
@@ -69,6 +68,7 @@ ext {
     version_ie_full = "${version_minecraft}-${version_ie}"
     version_ic = versionProps.getProperty('version_ic', '[0,)')
     version_ie_curse = versionProps['version_ie_curse']
+    version_ic_curse = versionProps['version_ic_curse']
     version_wayfix_curse = versionProps['version_wayfix_curse']
     version_cloth_config_curse = versionProps['version_cloth_config_curse']
     version_engineered_schematics_curse = versionProps['version_engineered_schematics_curse']
@@ -147,20 +147,6 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
     dependsOn processResources
 }
 
-def icJar = null
-def icDir = file('../ImmersiveConvergence-21/build/libs')
-def matchingJars = fileTree(icDir) {
-    include "ImmersiveConvergence-${version_minecraft}-*-dev.jar"
-    exclude "**/*-sources.jar"
-}.files
-
-if (!matchingJars.isEmpty()) {
-    icJar = matchingJars.sort { a, b -> b.lastModified() <=> a.lastModified() }.last()
-    logger.lifecycle("✅ Found IC deobf JAR: ${icJar.name}")
-} else {
-    logger.warn('⚠️  No IC deobf JAR found in ../ImmersiveConvergence-21/build/libs')
-}
-
 neoForge {
     version = project.version_neoforge
 
@@ -180,6 +166,7 @@ neoForge {
     runs {
         client {
             client()
+            getAdditionalRuntimeClasspathConfiguration().extendsFrom(configurations.maybeCreate('clientRuntimeOnly'))
             programArguments.addAll '--username', 'tgstyle', '--width', '1920', '--height', '1080'
             jvmArgument("-Djava.library.path=/usr/lib64")
             environment 'LD_LIBRARY_PATH', '/usr/lib64'
@@ -209,22 +196,15 @@ neoForge {
 
 tasks.register('prepareGametestOutputs') {
     dependsOn gametestClasses, processResources
-    doFirst {
-        layout.buildDirectory.dir('classes/java/gametest').get().asFile.mkdirs()
-        layout.buildDirectory.dir('resources/gametest').get().asFile.mkdirs()
-    }
 }
 
 tasks.register('prepareDatagenOutputs') {
     dependsOn datagenClasses, processResources
-    doFirst {
-        layout.buildDirectory.dir('classes/java/datagen').get().asFile.mkdirs()
-        layout.buildDirectory.dir('resources/datagen').get().asFile.mkdirs()
-    }
 }
 
 afterEvaluate {
     tasks.named('runData').configure { dependsOn('prepareDatagenOutputs', 'prepareGametestOutputs') }
+    tasks.named('runServer').configure { standardInput = System.in }
 }
 
 repositories {
@@ -238,6 +218,7 @@ repositories {
 }
 
 configurations {
+    clientRuntimeOnly
     runtimeClasspath.extendsFrom localRuntime
 }
 
@@ -245,21 +226,16 @@ dependencies {
     implementation "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
     runtimeOnly  "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
 
-    runtimeOnly "curse.maven:${version_wayfix_curse}"
+    clientRuntimeOnly "curse.maven:${version_wayfix_curse}"
     runtimeOnly "curse.maven:${version_cloth_config_curse}"
     runtimeOnly "curse.maven:${version_engineered_schematics_curse}"
 
     implementation "curse.maven:${version_ie_curse}"
     implementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie_full}:datagen"
+    implementation "curse.maven:${version_ic_curse}"
 
     implementation "curse.maven:${version_jade_curse}"
     implementation "curse.maven:${version_top_curse}"
-
-    if (icJar != null) {
-        implementation files(icJar)
-    } else {
-        logger.warn('⚠️  Falling back to CurseMaven for ImmersiveConvergence')
-    }
 
     jarJar(implementation("malte0811:DualCodecs")) {
         version {
@@ -280,7 +256,7 @@ tasks.register('bumpVersion') {
     doLast {
         def props = new Properties()
         versionPropsFile.asFile.withInputStream { props.load(it) }
-        props['build_number'] = nextBuild.toString()
+        props['build_number'] = (currentBuild + 1).toString()
         versionPropsFile.asFile.withOutputStream { props.store(it, null) }
     }
 }
@@ -347,11 +323,6 @@ tasks.register('optimizeOgg') {
     }
 }
 
-processResources.dependsOn bumpVersion
-jar.dependsOn bumpVersion
-datagenJar.dependsOn bumpVersion
-sourcesJar.dependsOn bumpVersion
-
 tasks.register('genIntellijRunsDummy') {}
 
 jar {
@@ -367,5 +338,3 @@ publishing {
     publications { register('mavenJava', MavenPublication) { from(components.java as SoftwareComponent) }}
     repositories { maven { url = "file://${project.projectDir}/repo" } }
 }
-
-build.dependsOn bumpVersion
