@@ -237,6 +237,10 @@ dependencies {
     implementation "curse.maven:${version_jade_curse}"
     implementation "curse.maven:${version_top_curse}"
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
+
     jarJar(implementation("malte0811:DualCodecs")) {
         version {
             strictly "[${version_dualcodecs},1)"
@@ -337,4 +341,10 @@ idea { module { downloadSources = true; downloadJavadoc = true } }
 publishing {
     publications { register('mavenJava', MavenPublication) { from(components.java as SoftwareComponent) }}
     repositories { maven { url = "file://${project.projectDir}/repo" } }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    outputs.upToDateWhen { false }
+    testLogging.events 'passed', 'skipped', 'failed'
 }
