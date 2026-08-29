@@ -39,6 +39,8 @@ jobs:
 
       - name: Verify generated content
         run: |
+          git diff -- src/generated/resources/assets/immersivetechnology/models/multiblock/metal/split/boiler_solid_active_split.json
+          git diff -- src/generated/resources/assets/immersivetechnology/models/multiblock/metal/split/boiler_solid_split.json
           python3 scripts/content_manifest.py --check src/test/resources/baseline-content-manifest.json
           git diff --exit-code -- src/main src/generated
 
