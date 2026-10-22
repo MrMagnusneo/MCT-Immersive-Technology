@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
-import mctmods.immersivetechnology.core.registration.ModTags;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -31,7 +33,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
-public class BaseBlock extends Block implements IBlock, SimpleWaterloggedBlock {
+public class BaseBlock extends Block implements IBlock, SimpleWaterloggedBlock, IEBlockInterfaces.IHammerBlockInteraction {
     protected final boolean notNormalBlock;
     private final boolean fitsIntoContainer;
     boolean hasFlavour;
@@ -82,9 +84,16 @@ public class BaseBlock extends Block implements IBlock, SimpleWaterloggedBlock {
 
     @Override @NotNull public InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (activeStack.is(ModTags.formationTools)) { return this.hammerUseSide(hit.getDirection(), player, InteractionHand.MAIN_HAND, world, pos, hit); }
-        else if (activeStack.is(ModTags.screwdrivers)) { return this.screwdriverUseSide(hit.getDirection(), player, InteractionHand.MAIN_HAND, world, pos, hit); }
+        if (Utils.isHammer(activeStack)) { return this.hammerUseSide(hit.getDirection(), player, InteractionHand.MAIN_HAND, world, pos, hit); }
+        else if (Utils.isScrewdriver(activeStack)) { return this.screwdriverUseSide(hit.getDirection(), player, InteractionHand.MAIN_HAND, world, pos, hit); }
         else { return super.useWithoutItem(state, world, pos, player, hit); }
+    }
+
+    // Called by the Engineer's Hammer before IE falls back to its generic block rotation
+    @Override public InteractionResult useHammer(BlockState state, Level world, BlockPos pos, @Nullable Player player, UseOnContext context) {
+        if (player == null) { return InteractionResult.PASS; }
+        BlockHitResult hit = new BlockHitResult(context.getClickLocation(), context.getClickedFace(), pos, context.isInside());
+        return this.hammerUseSide(context.getClickedFace(), player, context.getHand(), world, pos, hit);
     }
 
     public InteractionResult hammerUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {

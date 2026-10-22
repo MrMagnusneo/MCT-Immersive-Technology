@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
-import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -111,12 +110,45 @@ public class ModEntityBlock<T extends BlockEntity> extends BaseBlock implements 
 
     @Override public InteractionResult hammerUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {
         BlockEntity tile = w.getBlockEntity(pos);
-        if (tile instanceof BlockInterfaces.IHammerInteraction) {
-            boolean b = ((BlockInterfaces.IHammerInteraction) tile).hammerUseSide(side, player, hand, hit.getLocation());
-            if (b) { return InteractionResult.SUCCESS; }
-            else { return InteractionResult.FAIL; }
+        if (tile instanceof BlockInterfaces.IHammerInteraction hammerInteraction && hammerInteraction.hammerUseSide(side, player, hand, hit.getLocation())) {
+            return InteractionResult.SUCCESS;
         }
+        if (tile instanceof BlockInterfaces.IDirectionalBE directionalBE && directionalBE.canHammerRotate(side, hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)), player)) {
+            if (!w.isClientSide) { rotateWithHammer(directionalBE, tile, side, player); }
+            return InteractionResult.sidedSuccess(w.isClientSide);
+        }
+        if (tile instanceof BlockInterfaces.IConfigurableSides sideConfig) {
+            if (w.isClientSide) { return InteractionResult.SUCCESS; }
+            Direction configSide = player.isShiftKeyDown() ? side.getOpposite() : side;
+            return sideConfig.toggleSide(configSide, player) ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+        }
+        // Handled by this block: keep the hammer from applying IE's generic block-state rotation
+        if (tile instanceof BlockInterfaces.IDirectionalBE || tile instanceof BlockInterfaces.IHammerInteraction) { return InteractionResult.CONSUME; }
         return super.hammerUseSide(side, player, hand, w, pos, hit);
+    }
+
+    private static void rotateWithHammer(BlockInterfaces.IDirectionalBE directionalBE, BlockEntity tile, Direction side, Player player) {
+        Direction f = directionalBE.getFacing();
+        PlacementLimitation limit = directionalBE.getFacingLimitation();
+        f = switch (limit) {
+            case SIDE_CLICKED -> Direction.values()[Math.floorMod(f.ordinal() + (player.isShiftKeyDown() ? -1 : 1), 6)];
+            case PISTON_LIKE -> {
+                Direction.Axis axis = side.getAxis();
+                Direction rotated = rotateAround(f, axis);
+                yield player.isShiftKeyDown() != (side.getAxisDirection() == Direction.AxisDirection.NEGATIVE) ? rotated.getOpposite() : rotated;
+            }
+            case HORIZONTAL, HORIZONTAL_PREFER_SIDE, HORIZONTAL_QUADRANT, HORIZONTAL_AXIS -> player.isShiftKeyDown() != side.equals(Direction.DOWN) ? f.getCounterClockWise() : f.getClockWise();
+            default -> f;
+        };
+        directionalBE.setFacing(f);
+        directionalBE.afterRotation();
+        tile.setChanged();
+        Level world = tile.getLevel();
+        if (world != null) {
+            BlockState state = tile.getBlockState();
+            world.sendBlockUpdated(tile.getBlockPos(), state, state, 3);
+            world.blockEvent(tile.getBlockPos(), state.getBlock(), 255, 0);
+        }
     }
 
     @Override public InteractionResult screwdriverUseSide(Direction side, Player player, InteractionHand hand, Level w, BlockPos pos, BlockHitResult hit) {
@@ -137,30 +169,6 @@ public class ModEntityBlock<T extends BlockEntity> extends BaseBlock implements 
         float hitZ = (float) hit.getLocation().z - pos.getZ();
         ItemStack heldItem = player.getMainHandItem();
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof BlockInterfaces.IDirectionalBE && heldItem.is(ModTags.formationTools) && ((BlockInterfaces.IDirectionalBE) tile).canHammerRotate(side, hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)), player) && !world.isClientSide) {
-            Direction f = ((BlockInterfaces.IDirectionalBE) tile).getFacing();
-            PlacementLimitation limit = ((BlockInterfaces.IDirectionalBE) tile).getFacingLimitation();
-            f = switch (limit) {
-                case SIDE_CLICKED -> Direction.values()[Math.floorMod(f.ordinal() + (player.isShiftKeyDown() ? -1 : 1), 6)];
-                case PISTON_LIKE -> {
-                    Direction.Axis axis = side.getAxis();
-                    Direction rotated = rotateAround(f, axis);
-                    yield player.isShiftKeyDown() != (side.getAxisDirection() == Direction.AxisDirection.NEGATIVE) ? rotated.getOpposite() : rotated;
-                }
-                case HORIZONTAL, HORIZONTAL_PREFER_SIDE, HORIZONTAL_QUADRANT, HORIZONTAL_AXIS -> player.isShiftKeyDown() != side.equals(Direction.DOWN) ? f.getCounterClockWise() : f.getClockWise();
-                default -> f;
-            };
-            ((BlockInterfaces.IDirectionalBE) tile).setFacing(f);
-            ((BlockInterfaces.IDirectionalBE) tile).afterRotation();
-            tile.setChanged();
-            world.sendBlockUpdated(pos, state, state, 3);
-            world.blockEvent(tile.getBlockPos(), tile.getBlockState().getBlock(), 255, 0);
-            return InteractionResult.SUCCESS;
-        }
-        if (tile instanceof BlockInterfaces.IConfigurableSides && heldItem.is(ModTags.formationTools) && !world.isClientSide) {
-            Direction configSide = player.isShiftKeyDown() ? side.getOpposite() : side;
-            if (((BlockInterfaces.IConfigurableSides) tile).toggleSide(configSide, player)) { return InteractionResult.SUCCESS; }
-        }
         if (tile instanceof BlockInterfaces.IPlayerInteraction) {
             boolean b = ((BlockInterfaces.IPlayerInteraction) tile).interact(side, player, InteractionHand.MAIN_HAND, heldItem, hitX, hitY, hitZ);
             if (b) { return InteractionResult.SUCCESS; }

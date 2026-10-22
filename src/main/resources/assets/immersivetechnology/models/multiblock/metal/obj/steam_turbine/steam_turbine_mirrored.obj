@@ -1,5 +1,5 @@
 # Made in Blockbench 5.1.6
-mtllib steam_turbine_mirrored.mtl
+mtllib steam_turbine.mtl
 
 o cube
 v 0.125 0.625 11.5625

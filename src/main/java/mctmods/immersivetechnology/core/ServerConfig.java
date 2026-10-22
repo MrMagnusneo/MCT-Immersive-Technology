@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core;
 
+import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -160,8 +161,8 @@ public class ServerConfig {
     public static int electrolyticCrucibleBatteryEnergyCapacity = 16000;
     public static int electrolyticCrucibleBatteryEnergyMaxInput = 4096;
 
-    public static int fluidPipeAmountPressurized = 2500;
-    public static int fluidPipeAmountUnpressurized = 100;
+    public static int fluidPipeAmountPressurized = IFluidPipe.AMOUNT_PRESSURIZED;
+    public static int fluidPipeAmountUnpressurized = IFluidPipe.AMOUNT_UNPRESSURIZED;
 
     public static int gasTurbineInputTankCapacity = 12000;
     public static int gasTurbineOutputTankCapacity = 12000;
@@ -380,8 +381,8 @@ public class ServerConfig {
         BUILDER.pop();
 
         BUILDER.push("fluid_pipe");
-        FLUID_PIPE_AMOUNT_PRESSURIZED = BUILDER.defineInRange("amount_pressurized", 2500, 1, Integer.MAX_VALUE);
-        FLUID_PIPE_AMOUNT_UNPRESSURIZED = BUILDER.defineInRange("amount_unpressurized", 100, 1, Integer.MAX_VALUE);
+        FLUID_PIPE_AMOUNT_PRESSURIZED = BUILDER.defineInRange("amount_pressurized", IFluidPipe.AMOUNT_PRESSURIZED, 1, Integer.MAX_VALUE);
+        FLUID_PIPE_AMOUNT_UNPRESSURIZED = BUILDER.defineInRange("amount_unpressurized", IFluidPipe.AMOUNT_UNPRESSURIZED, 1, Integer.MAX_VALUE);
         BUILDER.pop();
     }
 

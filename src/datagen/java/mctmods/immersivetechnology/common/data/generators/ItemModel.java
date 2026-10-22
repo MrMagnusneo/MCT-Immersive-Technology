@@ -64,7 +64,6 @@ public class ItemModel extends ItemModelProvider {
     }
 
     private void generateGeneratedItem() {
-        withExistingParent("formation_tool", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "formation_tool"));
         withExistingParent("salt", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "salt"));
     }
 

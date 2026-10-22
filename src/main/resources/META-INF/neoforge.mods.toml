@@ -14,28 +14,28 @@ credits = "tgstyle (author), Peter (new models), KHAZ (new sounds), and the Imme
 
 [[dependencies.immersivetechnology]]
 modId="neoforge"
-mandatory=true
+type="required"
 versionRange="[${version_neoforge_min},)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.immersivetechnology]]
 modId="minecraft"
-mandatory=true
+type="required"
 versionRange="[${version_mc}]"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.immersivetechnology]]
 modId="immersiveengineering"
-mandatory=true
-versionRange="[${version_ie},]"
-ordering="NONE"
+type="required"
+versionRange="[${version_ie},)"
+ordering="AFTER"
 side="BOTH"
 
 [[dependencies.immersivetechnology]]
 modId="immersiveconvergence"
-mandatory=true
+type="required"
 versionRange="${version_ic}"
 ordering="NONE"
 side="BOTH"

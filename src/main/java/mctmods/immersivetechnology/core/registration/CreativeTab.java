@@ -16,7 +16,7 @@ public class CreativeTab {
     public static Supplier<CreativeModeTab> MAIN = REGISTER.register(
             "main",
             () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 0)
-                    .icon(() -> ModItems.FORMATION_TOOL.get().getDefaultInstance())
+                    .icon(() -> ModItems.SALT.get().getDefaultInstance())
                     .title(Component.translatable(TranslationKey.CREATIVE_TAB.getLocation()))
                     .displayItems(CreativeTab::fillITTab)
                     .build()

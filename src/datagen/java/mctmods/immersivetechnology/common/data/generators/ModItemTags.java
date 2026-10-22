@@ -6,8 +6,6 @@ import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -21,12 +19,8 @@ public class ModItemTags extends ItemTagsProvider {
     }
 
     @Override protected void addTags(@NotNull Provider provider) {
-        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "salts"))).add(ModItems.SALT.get());
-        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "dusts/salt"))).add(ModItems.SALT.get());
+        tag(ModTags.saltForge).add(ModItems.SALT.get());
         tag(ModTags.igniters).add(Items.TORCH, Items.FLINT_AND_STEEL);
         tag(ModTags.igniters_consume).add(Items.TORCH);
-        tag(ModTags.formationTools).add(ModItems.FORMATION_TOOL.get()).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "hammer"));
-        tag(ModTags.screwdrivers).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "screwdriver"));
-        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "tools/hammers"))).add(ModItems.FORMATION_TOOL.get());
     }
 }
