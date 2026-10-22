@@ -1324,7 +1324,7 @@
     "src/main/java/mctmods/immersivetechnology/common/multiblocks/gui/SolarMenu.java": "06b34fddc4df28a92c56591dcdf5696b638b8066333a54c292630f6e9c05d972",
     "src/main/java/mctmods/immersivetechnology/common/multiblocks/gui/helper/ModSlot.java": "7550412061db93bb5fa5f7798b8ff1aa21e04cf5663c08493b2ff62c3679cc77",
     "src/main/java/mctmods/immersivetechnology/common/multiblocks/gui/helper/MultiblockGui.java": "d1c0484ad9b32ce68729e9161ae00058d05a79bf8fe2ed82c62e185e2813b947",
-    "src/main/java/mctmods/immersivetechnology/common/multiblocks/helper/ClearTank.java": "8c6367401941bf2cb19da3114232908bcc2fd95e2e002b9c10ac41d9678862c2",
+    "src/main/java/mctmods/immersivetechnology/common/multiblocks/helper/ClearTank.java": "9dc4683f0a804e23a7a0d401276ad71969b3e79af61290ff9ae4a41bb15205db",
     "src/main/java/mctmods/immersivetechnology/common/multiblocks/helper/ClientMultiblockProperties.java": "ca6387be483f6d73b27fee6e06c79116cbbc4ecaa90c24c629443a9193c16595",
     "src/main/java/mctmods/immersivetechnology/common/multiblocks/helper/FurnaceHandler.java": "f478b35d781c2b3249ad21d46f40b143af332225fd7fd173b7e72aa3247083f8",
     "src/main/java/mctmods/immersivetechnology/common/multiblocks/helper/IDisassemblingAware.java": "92e3ddab38164165e3a0025d2f0d466db2321122e26047016f0d824a347b5de5",
