@@ -28,4 +28,22 @@ class MultiblockTemplateTest
 			}
 		}
 	}
+
+	@Test
+	void meltingCrucibleUsesRegisteredImmersiveEngineeringBlockEntityIds() throws Exception
+	{
+		try(var resource = getClass().getClassLoader().getResourceAsStream(
+				"data/immersivetechnology/structure/multiblocks/melting_crucible.nbt"
+		))
+		{
+			assertNotNull(resource, "Melting crucible structure must be packaged");
+			try(var gzip = new GZIPInputStream(resource))
+			{
+				String nbtBytes = new String(gzip.readAllBytes(), StandardCharsets.ISO_8859_1);
+				// Block names are furnace_heater/fluid_pipe, but IE registers their block entities without the underscore
+				assertTrue(nbtBytes.contains("immersiveengineering:furnaceheater"), "Furnace heater block entity must use IE's furnaceheater id");
+				assertTrue(nbtBytes.contains("immersiveengineering:fluidpipe"), "Fluid pipe block entity must use IE's fluidpipe id");
+			}
+		}
+	}
 }

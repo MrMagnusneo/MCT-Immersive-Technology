@@ -1,7 +1,7 @@
 {
   "type": "immersivetechnology:steam_turbine",
   "inputAmount": 100,
-  "inputTag": "immersivetechnology:steam",
+  "inputTag": "c:steam",
   "output": {
     "amount": 100,
     "id": "immersivetechnology:exhaust_steam"

@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
-import mctmods.immersivetechnology.core.registration.ModTags;
+import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -118,7 +118,7 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
 
     @Override @NotNull public InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         ItemStack heldItem = player.getMainHandItem();
-        if (heldItem.is(ModTags.formationTools)) { return InteractionResult.PASS; }
+        if (Utils.isHammer(heldItem)) { return InteractionResult.PASS; }
         if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {

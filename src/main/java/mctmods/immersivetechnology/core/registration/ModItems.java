@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.common.items.helper.BaseItem;
-import mctmods.immersivetechnology.common.items.FormationTool;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +24,6 @@ public class ModItems {
 
     public static HashMap<String, Supplier<? extends Item>> getItemRegistryMap() { return ITEM_REGISTRY_MAP; }
 
-    public static final ItemRegObject<FormationTool> FORMATION_TOOL = register("formation_tool", FormationTool::new);
     public static final ItemRegObject<BaseItem> SALT = simple();
 
     public static void initItems() { }
@@ -35,7 +33,6 @@ public class ModItems {
     public static void init(IEventBus event) {
         initItems();
         REGISTER.register(event);
-        ITEM_REGISTRY_MAP.put("formation_tool", FORMATION_TOOL.regObject);
         ITEM_REGISTRY_MAP.put("salt", SALT.regObject);
     }
 
